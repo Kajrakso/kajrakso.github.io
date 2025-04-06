@@ -5,4 +5,4 @@ layout: default
 
 # Oskar Feed Jakobsen
 
-this is my page lol
+[bldalgs](/bldalgs)

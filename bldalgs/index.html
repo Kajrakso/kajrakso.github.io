@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>algs</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.0.0/dist/umd/supabase.min.js"></script>
+</head>
+<body>
+    <div class="admin-container" id="login-container">
+        <button id="admin-button" class="admin-button" style="display: none;">Add alg</button>
+
+        <button id="login-button" class="admin-button">Login</button>
+        <div id="login-dropdown" class="login-dropdown">
+            <input type="email" id="email" placeholder="Email">
+            <input type="password" id="password" placeholder="Password">
+            <button id="sign-in">Sign In</button>
+            <button id="sign-out">Sign Out</button>
+        </div>
+    </div>
+
+    <!-- Tabs and Content -->
+    <div class="tabs" id="tab-buttons"></div>
+    <div id="tabs-content"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
+
