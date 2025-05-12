@@ -8,7 +8,7 @@ const tabsTables = [
     { label: "Corners", tableName: "viw_alg_3c" },
     { label: "Edges", tableName: "viw_alg_3e" },
     { label: "Wings", tableName: "viw_alg_3w" },
-    { label: "LTCT", tableName: "viw_alg_2c2et1c" },
+    { label: "LTCT", tableName: "viw_alg_ltct" },
     // Add more tables here in the future by following the same structure
 ];
 
@@ -52,14 +52,19 @@ async function fetchData(tableName, tabId) {
         }
 
         if (data && data.length > 0) {
+          if (tableName == "viw_alg_ltct"){
             tabContent.innerHTML = `
                 <ul>
-                    ${data.map(item => {
-                        const formattedData = `${item.p1}-${item.p2}-${item.p3}: ${item.alg}`;
-                        return `<li>${formattedData}</li>`;
-                    }).join('')}
+                    ${data.map(item => `<li>${item.parity_target}-[${item.twist}]: ${item.alg}</li>`).join('')}
                 </ul>
             `;
+          } else {
+            tabContent.innerHTML = `
+                <ul>
+                    ${data.map(item => `<li>${item.p1}-${item.p2}-${item.p3}: ${item.alg}</li>`).join('')}
+                </ul>
+            `;
+          }
         } else {
             tabContent.innerHTML = '<p>No data found.</p>';
         }
