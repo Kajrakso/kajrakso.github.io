@@ -22,7 +22,10 @@ function generateTabs() {
         tabButton.textContent = tab.label;
         tabButton.classList.add('tab-button');
         tabButton.setAttribute('data-tab', `tab${index}`);
-        tabButton.onclick = () => showTab(`tab${index}`);
+        tabButton.onclick = () => {
+            window.location.hash = tab.label; // this sets URL to #label
+            showTab(`tab${index}`);
+        }
 
         // Append button to the tabs container
         tabButtonsContainer.appendChild(tabButton);
@@ -150,7 +153,15 @@ document.addEventListener('click', (e) => {
 // Auto-update login button if user is already signed in
 window.onload = async () => {
     generateTabs();
-    showTab('tab0');
+
+    const hash = window.location.hash.substring(1); // remove the "#"
+    const matchingTab = tabsTables.find((tab, index) => tab.label === hash);
+    if (matchingTab) {
+        const index = tabsTables.indexOf(matchingTab);
+        showTab(`tab${index}`);
+    } else {
+        showTab('tab0');
+    }
 
     const { data: { session } } = await supa.auth.getSession();
     if (session) {
