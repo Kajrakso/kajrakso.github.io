@@ -4,42 +4,13 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const supa = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // Data structure for tabs and their corresponding tables
-const tabsTables = [
-    { label: "Corners", tableName: "viw_alg_3c" },
-    { label: "Edges", tableName: "viw_alg_3e" },
-    { label: "Wings", tableName: "viw_alg_3w" },
-    { label: "LTCT", tableName: "viw_alg_ltct" },
+const tabsTables = {
+    "Corners": "viw_alg_3c",
+    "Edges": "viw_alg_3e",
+    "Wings": "viw_alg_3w",
+    "LTCT": "viw_alg_ltct",
     // Add more tables here in the future by following the same structure
-];
-
-function generateTabs() {
-    const tabButtonsContainer = document.getElementById('tab-buttons');
-    const tabsContentContainer = document.getElementById('tabs-content');
-
-    tabsTables.forEach((tab, index) => {
-        // Create tab button
-        const tabButton = document.createElement('button');
-        tabButton.textContent = tab.label;
-        tabButton.classList.add('tab-button');
-        tabButton.setAttribute('data-tab', `tab${index}`);
-        tabButton.onclick = () => {
-            window.location.hash = tab.label; // this sets URL to #label
-            showTab(`tab${index}`);
-        }
-
-        // Append button to the tabs container
-        tabButtonsContainer.appendChild(tabButton);
-
-        // Create corresponding tab content section
-        const tabContent = document.createElement('div');
-        tabContent.id = `tab${index}`;
-        tabContent.classList.add('tab-content');
-        tabContent.innerHTML = `<p>Loading ${tab.label} data...</p>`;
-
-        // Append content section to the tabs content container
-        tabsContentContainer.appendChild(tabContent);
-    });
-}
+};
 
 async function fetchData(tableName, tabId) {
     try {
@@ -48,26 +19,78 @@ async function fetchData(tableName, tabId) {
             .select('*')
             .not('alg', 'is',  null);
 
-        const tabContent = document.getElementById(tabId);
-
         if (error) {
             throw error;
         }
 
+        const tabContent = document.getElementById(tabId);
+
         if (data && data.length > 0) {
-          if (tableName == "viw_alg_ltct"){
-            tabContent.innerHTML = `
-                <ul>
-                    ${data.map(item => `<li>${item.parity_target}-[${item.twist}]: ${item.alg}</li>`).join('')}
-                </ul>
-            `;
-          } else {
-            tabContent.innerHTML = `
-                <ul>
-                    ${data.map(item => `<li>${item.p1}-${item.p2}-${item.p3}: ${item.alg}</li>`).join('')}
-                </ul>
-            `;
-          }
+            const grouped = {};
+
+            switch (tabId){
+                case 'Corners':
+                case 'Edges':
+                case 'Wings':
+                    data.forEach(({ p1, p2, p3, alg }) => {
+                      if (!grouped[p1]) grouped[p1] = {};
+                      if (!grouped[p1][p2]) grouped[p1][p2] = [];
+                      grouped[p1][p2].push({ p3, alg });
+                    });
+
+                    for (const p1 in grouped) {
+                      const p1Summary = document.createElement("h3");
+                      const p1Details = document.createElement("div");
+                      p1Summary.textContent = `Buffer: ${p1}`;
+                      p1Details.appendChild(p1Summary);
+
+                      for (const p2 in grouped[p1]) {
+                        const p2Details = document.createElement("details");
+                        const p2Summary = document.createElement("summary");
+                        p2Summary.textContent = `${p2}`;
+                        p2Details.appendChild(p2Summary);
+
+                        grouped[p1][p2].forEach(({ p3, alg }) => {
+                          const entryDiv = document.createElement("div");
+                          entryDiv.className = "entry";
+                          entryDiv.innerHTML = `<span>${p2}-${p3}:</span><span>${alg}</span>`;
+                          p2Details.appendChild(entryDiv);
+                        });
+
+                        p1Details.appendChild(p2Details);
+                      }
+
+                      tabContent.appendChild(p1Details);
+                    }
+                    break;
+
+                case 'LTCT':
+                    data.forEach(({ parity_target, twist, alg }) => {
+                      if (!grouped[parity_target]) grouped[parity_target] = [];
+                      grouped[parity_target].push({ twist, alg });
+                    });
+
+                    for (const p1 in grouped) {
+                      const p1Details = document.createElement("details");
+                      const p1Summary = document.createElement("summary");
+                      p1Summary.textContent = `${p1}`;
+                      p1Details.appendChild(p1Summary);
+
+                    grouped[p1].forEach(({ twist, alg }) => {
+                      const entryDiv = document.createElement("div");
+                      entryDiv.className = "entry";
+                      entryDiv.innerHTML = `<span>${twist}:</span> ${alg}`;
+                      p1Details.appendChild(entryDiv);
+                    });
+
+                      tabContent.appendChild(p1Details);
+                    }
+                    break;
+
+                default:
+                    console.log(`No match for tabId = ${tabId}`);
+                    break;
+            }
         } else {
             tabContent.innerHTML = '<p>No data found.</p>';
         }
@@ -97,77 +120,11 @@ function showTab(tabId) {
 
     // Fetch data for the active tab if not already loaded
     if (!activeTab.innerHTML || activeTab.innerHTML.includes('Loading')) {
-        const activeTabIndex = tabId.replace('tab', '');
-        fetchData(tabsTables[activeTabIndex].tableName, tabId);
+        fetchData(tabsTables[tabId], tabId);
     }
 }
 
-
-// Toggle login dropdown
-document.getElementById('login-button').addEventListener('click', () => {
-    const dropdown = document.getElementById('login-dropdown');
-    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
-});
-
-// Sign In with Email and Password
-document.getElementById('sign-in').addEventListener('click', async () => {
-    const email = document.getElementById('email').value.trim();
-    const password = document.getElementById('password').value.trim();
-
-    if (!email || !password) {
-        alert('Please enter both email and password.');
-        return;
-    }
-
-    const { data, error } = await supa.auth.signInWithPassword({ email, password });
-
-    if (error) {
-        alert('Sign-in error: ' + error.message);
-    } else {
-        document.getElementById('login-button').textContent = data.user.email;
-        document.getElementById('login-dropdown').style.display = 'none';
-    }
-});
-
-// Sign Out
-document.getElementById('sign-out').addEventListener('click', async () => {
-    const { error } = await supa.auth.signOut();
-
-    if (error) {
-        alert('Sign-out error: ' + error.message);
-    } else {
-        document.getElementById('login-button').textContent = 'Login';
-        document.getElementById('login-dropdown').style.display = 'none';
-    }
-});
-
-// Close dropdown when clicking outside
-document.addEventListener('click', (e) => {
-    const container = document.getElementById('login-container');
-    if (!container.contains(e.target)) {
-        document.getElementById('login-dropdown').style.display = 'none';
-    }
-});
-
-
-// Auto-update login button if user is already signed in
 window.onload = async () => {
-    generateTabs();
-
     const hash = window.location.hash.substring(1); // remove the "#"
-    const matchingTab = tabsTables.find((tab, index) => tab.label === hash);
-    if (matchingTab) {
-        const index = tabsTables.indexOf(matchingTab);
-        showTab(`tab${index}`);
-    } else {
-        showTab('tab0');
-    }
-
-    const { data: { session } } = await supa.auth.getSession();
-    if (session) {
-      document.getElementById('login-button').textContent = session.user.email;
-      document.getElementById('admin-button').style.display = 'inline-block';
-    } else {
-      document.getElementById('admin-button').style.display = 'none';
-    }
+    showTab(hash in tabsTables ? hash : "Corners");
 };

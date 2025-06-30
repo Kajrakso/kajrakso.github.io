@@ -7,25 +7,24 @@
     <title>bldalgs</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.0.0/dist/umd/supabase.min.js"></script>
-</head>
-<body>
-    <div class="admin-container" id="login-container">
-        <button id="admin-button" class="admin-button" style="display: none;">Add alg</button>
-
-        <button id="login-button" class="admin-button">Login</button>
-        <div id="login-dropdown" class="login-dropdown">
-            <input type="email" id="email" placeholder="Email">
-            <input type="password" id="password" placeholder="Password">
-            <button id="sign-in">Sign In</button>
-            <button id="sign-out">Sign Out</button>
-        </div>
-    </div>
-
-    <!-- Tabs and Content -->
-    <div class="tabs" id="tab-buttons"></div>
-    <div id="tabs-content"></div>
 
     <script src="app.js"></script>
+</head>
+<body>
+    <div id="tab-buttons">
+        <button class="tab-button" data-tab="Corners" onclick="showTab(`Corners`)">Corners</button> 
+        <button class="tab-button" data-tab="Edges" onclick="showTab(`Edges`)">Edges</button> 
+        <button class="tab-button" data-tab="Wings" onclick="showTab(`Wings`)">Wings</button> 
+        <button class="tab-button" data-tab="LTCT" onclick="showTab(`LTCT`)">LTCT</button> 
+    </div>
+
+    <div id="tabs-content">
+        <div style="display:none;" class="tab-content" id="Corners"></div>
+        <div style="display:none;" class="tab-content" id="Edges"></div>
+        <div style="display:none;" class="tab-content" id="Wings"></div>
+        <div style="display:none;" class="tab-content" id="LTCT"></div>
+    </div>
+
 </body>
 </html>
 
