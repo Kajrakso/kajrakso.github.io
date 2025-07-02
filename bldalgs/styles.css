@@ -72,7 +72,7 @@ summary:hover {
 /* white-space: pre; */
   display: flex;
   gap: 0.5em;
-  margin-left: 2em;
+  margin-left: 1em;
   padding: 2px 0;
 }
 .entry span:first-child {
