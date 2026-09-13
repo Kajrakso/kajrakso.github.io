@@ -1,30 +1,34 @@
 /* styles.css */
 body {
     background-color: #f4f4f4;
+    overflow-x: hidden;
 }
 
 #tab-buttons {
-    display: flex;             /* Align buttons horizontally */
-    justify-content: left;     /* Left align the buttons */
-    margin-top: 20px;          /* Space from the top */
-    margin-bottom: 10px;       /* Space below the buttons */
+    display: flex;
+    justify-content: left;
+    gap: 0;
+    border-bottom: 2px solid #ddd;
+    margin-top: 20px;
+    margin-bottom: 0;
+    padding: 0 20px;
 }
 
 .tab-button {
-    background-color: #4F4F4F;
-    color: white;
-    padding: 12px 24px;        /* Increase padding for better appearance */
-    margin: 0 5px;            /* Space between buttons */
+    background: none;
+    color: #888;
+    padding: 10px 20px;
+    margin: 0;
     border: none;
     cursor: pointer;
-    font-size: 16px;
-    border-radius: 5px;
-    transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth transition */
+    font-size: 15px;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    transition: color 0.2s ease, border-color 0.2s ease;
 }
 
 .tab-button:hover {
-    background-color: #45a049;  /* Slightly darker green on hover */
-    transform: scale(1.05);      /* Slight zoom effect */
+    color: #555;
 }
 
 .tab-button:focus {
@@ -32,54 +36,363 @@ body {
 }
 
 .tab-button.active {
-    background-color: #388E3C;  /* Darker green when active */
+    color: #333;
+    border-bottom-color: #388E3C;
 }
 
 .tab-content {
     width: 97vw;
     display: none;
     padding: 20px;
-    /* margin: 20px; */
     background-color: white;
-    border-radius: 8px;
+    border-radius: 0 0 8px 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow-x: auto;
+    box-sizing: border-box;
 }
 
 h2 {
     color: #333;
 }
 
-details {
-  position: relative;
-  /* padding-left: 1em; */
-  /* border-left: 1px solid #ccc; */
-  /* margin-left: 0.5em; */
-    margin-bottom: 0.5em;
+h3 {
+    font-size: 15px;
+    font-weight: 600;
+    color: #555;
+    margin: 14px 0 6px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #eee;
 }
+
+details {
+    position: relative;
+    margin-bottom: 2px;
+}
+
 summary {
-  font-weight: bold;
-  /* padding: 4px 8px; */
-  background-color: #f9f9f9;
-  border-radius: 4px;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 6px 8px;
+    border-radius: 4px;
+    color: #444;
 }
 
 summary:hover {
-  background-color: #e0e0e0;
-  cursor: pointer;
+    background-color: #f0f0f0;
+    cursor: pointer;
 }
+
 .entry {
     font-family: 'Courier New', monospace;
-/* white-space: pre; */
-  display: flex;
-  gap: 0.5em;
-  margin-left: 1em;
-  padding: 2px 0;
+    display: flex;
+    gap: 1em;
+    margin-left: 1.5em;
+    padding: 4px 8px;
+    align-items: center;
+    font-size: 14px;
+    border-bottom: 1px solid #f0f0f0;
+    white-space: nowrap;
 }
+
+.entry:last-child {
+    border-bottom: none;
+}
+
 .entry span:first-child {
-  font-weight: bold;
+    font-weight: 600;
+    color: #555;
+    min-width: 60px;
+}
+
+.entry span:nth-child(2) {
+    color: #222;
 }
 
 .entry:hover {
-  background-color: #f0f0f0;
+    background-color: #f8f8f8;
 }
 
+/* --- Admin login button --- */
+#admin-dot {
+    position: fixed;
+    top: 10px;
+    right: 12px;
+    background: none;
+    border: 1px solid #ccc;
+    color: #999;
+    font-size: 11px;
+    padding: 2px 8px;
+    cursor: pointer;
+    z-index: 100;
+    border-radius: 3px;
+    transition: color 0.3s ease, border-color 0.3s ease;
+}
+
+#admin-dot:hover {
+    color: #555;
+    border-color: #999;
+}
+
+body.admin #admin-dot {
+    display: none;
+}
+
+/* --- Sign-out button --- */
+#signout-btn {
+    display: none;
+    position: fixed;
+    top: 8px;
+    right: 12px;
+    background: none;
+    border: none;
+    color: #999;
+    font-size: 11px;
+    cursor: pointer;
+    z-index: 100;
+    padding: 2px 4px;
+}
+
+#signout-btn:hover {
+    color: #333;
+}
+
+body.admin #signout-btn {
+    display: block;
+}
+
+/* --- Modal overlay --- */
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 200;
+    justify-content: center;
+    align-items: center;
+}
+
+.overlay.open {
+    display: flex;
+}
+
+.modal {
+    background: white;
+    padding: 24px;
+    border-radius: 8px;
+    width: 320px;
+    max-width: 90vw;
+    position: relative;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.modal h2 {
+    margin-top: 0;
+    font-size: 18px;
+}
+
+.modal-close {
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #999;
+}
+
+.modal-close:hover {
+    color: #333;
+}
+
+.modal input[type="email"],
+.modal input[type="password"],
+.modal input[type="text"] {
+    width: 100%;
+    padding: 8px 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.modal button[type="submit"] {
+    width: 100%;
+    padding: 8px;
+    background-color: #388E3C;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.modal button[type="submit"]:hover {
+    background-color: #2e7d32;
+}
+
+#login-error,
+#add-error {
+    color: #c0392b;
+    font-size: 12px;
+    margin-top: 8px;
+    min-height: 16px;
+}
+
+/* --- Edit / Add controls --- */
+.edit-btn,
+.del-btn {
+    background: none;
+    border: 1px solid #ccc;
+    color: #999;
+    font-size: 10px;
+    padding: 1px 5px;
+    cursor: pointer;
+    border-radius: 3px;
+    margin-left: 4px;
+    line-height: 1.4;
+}
+
+.edit-btn:hover {
+    border-color: #666;
+    color: #333;
+}
+
+.del-btn:hover {
+    border-color: #c0392b;
+    color: #c0392b;
+}
+
+.entry-edit-input {
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    padding: 1px 4px;
+    border: 1px solid #aaa;
+    border-radius: 3px;
+    flex: 1;
+    min-width: 120px;
+}
+
+.save-btn,
+.cancel-btn {
+    font-size: 10px;
+    padding: 1px 5px;
+    cursor: pointer;
+    border-radius: 3px;
+    border: 1px solid #ccc;
+    background: white;
+    color: #333;
+    line-height: 1.4;
+}
+
+.save-btn {
+    background-color: #388E3C;
+    color: white;
+    border-color: #388E3C;
+}
+
+.save-btn:hover {
+    background-color: #2e7d32;
+}
+
+.cancel-btn:hover {
+    background-color: #eee;
+}
+
+.add-btn {
+    display: inline-block;
+    margin-bottom: 10px;
+    padding: 4px 12px;
+    font-size: 13px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: white;
+    color: #555;
+}
+
+.add-btn:hover {
+    background-color: #f0f0f0;
+    border-color: #999;
+}
+
+/* --- Search bar --- */
+.search-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+}
+
+#search-input {
+    padding: 6px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    flex: 1;
+    min-width: 150px;
+    max-width: 280px;
+}
+
+#search-input:focus {
+    outline: none;
+    border-color: #aaa;
+}
+
+.search-clear {
+    background: none;
+    border: none;
+    color: #aaa;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 2px 4px;
+    line-height: 1;
+}
+
+.search-clear:hover {
+    color: #555;
+}
+
+.search-bar .add-btn {
+    margin-bottom: 0;
+    margin-left: auto;
+}
+
+.add-field-label {
+    display: block;
+    font-size: 13px;
+    color: #555;
+    margin-bottom: 8px;
+}
+
+.add-field-label select {
+    display: block;
+    width: 100%;
+    margin-top: 4px;
+    padding: 6px 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    background: white;
+}
+
+.add-field-fixed {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 6px;
+    padding: 4px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.add-fixed-label {
+    font-weight: bold;
+}
+
+.add-fixed-value {
+    font-style: italic;
+}
